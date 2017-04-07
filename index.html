@@ -20,19 +20,31 @@
 
   <!--Backbone.js code/ Doing everything inline but module system is recommended-->
   <script>
+   //Backbone view to render list of Angular repo contributors
+   var ContributorsList = Backbone.View.extend({
+     el: '.page',
+     render: function () {
+       this.$el.html('!List of contributors should show here...');
+     }
+   });
+
     //Router to load the Homepage
     var Router = Backbone.Router.extend({
       routes: {
         '':'home'
       }
     });
+
+    //Creating instance of View to render list of Angular repo contributors
+    var contributorsList = new ContributorsList();
+
     //Creating instance of Homepage Router
-  var router = new Router();
-  router.on('route:home', function () {
-    console.log("we have successfully loaded the homepage");
-  });
-  //Kickstart backbone
-  Backbone.history.start();
+    var router = new Router();
+    router.on('route:home', function () {
+      contributorsList.render();
+    });
+    //Kickstart backbone
+    Backbone.history.start();
   </script>
 
 </body>
