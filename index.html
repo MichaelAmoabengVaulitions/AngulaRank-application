@@ -21,8 +21,18 @@
   <!--Backbone.js code/ Doing everything inline but module system is recommended-->
   <script>
     //Router to load the Homepage
-
-    
+    var Router = Backbone.Router.extend({
+      routes: {
+        '':'home'
+      }
+    });
+    //Creating instance of Homepage Router
+  var router = new Router();
+  router.on('route:home', function () {
+    console.log("we have successfully loaded the homepage");
+  });
+  //Kickstart backbone
+  Backbone.history.start();
   </script>
 
 </body>
