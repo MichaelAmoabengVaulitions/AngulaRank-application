@@ -4,6 +4,7 @@
   <title>AngulaRank-application</title>
   <link rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" />
+  <link rel="stylesheet" href="styles/styles.css" />
 </head>
 <body>
   <!--Main App area-->
@@ -13,9 +14,9 @@
           <hr/>
           <nav>
             <ul class="nav nav-pills pull-right">
-              <li role="presentation" class="active"><a href="#">Contributions</a></li>
-              <li role="presentation"><a href="#">Repositories</a></li>
-              <li role="presentation"><a href="#">Followers</a></li>
+              <li role="presentation" class="active"><a href="#">Number of Contributions</a></li>
+              <li role="presentation"><a href="#">Number of Repositories</a></li>
+              <li role="presentation"><a href="#">Number of Followers</a></li>
             </ul>
           </nav>
           <h3 class="text-muted">AngulaRepoRanker</h3>
@@ -26,7 +27,33 @@
   </div>
   <!--Contributors template-->
   <script type="text/template" id="contributors-template">
-    <h3>Testing template successfully loaded</h3>
+    <table class="table table-hover">
+      <thead >
+        <tr>
+          <th>Position</th>
+          <th>User</th>
+          <th>User-url</th>
+          <th>Type of User</th>
+          <th>Subscribtions</th>
+          <th>Repositories</th>
+          <th>Organizastions</th>
+        </tr>
+      </thead>
+      <!--Loop through the collection and output the results-->
+      <tbody>
+        <% _.each(obj.contributors, function(contributor){ %>
+          <tr>
+            <td><%- contributor.get('id') %></td>
+            <td><%- contributor.get('login') %></td>
+            <td><%- contributor.get('url') %></td>
+            <td><%- contributor.get('type') %></td>
+            <td><%- contributor.get('subscriptions_url') %></td>
+            <td><%- contributor.get('repos_url') %></td>
+            <td><%- contributor.get('organizations_url') %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
   </script>
 
   <!--Including necessary dependencies-->
@@ -41,7 +68,7 @@
    //Backbone contributors collection from GitHub developer API
    var Item = Backbone.Model.extend();
    var Contributors = Backbone.Collection.extend({
-     url: 'https://api.github.com/orgs/angular/people',
+     url: 'https://api.github.com/repos/angular/people',
      parse: function(response) {
        return response.results;
    },
