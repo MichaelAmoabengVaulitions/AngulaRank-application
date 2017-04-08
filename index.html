@@ -20,11 +20,44 @@
 
   <!--Backbone.js code/ Doing everything inline but module system is recommended-->
   <script>
+
+   //Adding an Ajax prefilter function because when requests are being fired to localhost
+   /*$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+     options.url = "https://github.com" + options.url;
+   });*/
+   //Backbone contributors collection from GitHub developer API
+   var Item = Backbone.Model.extend();
+   var Contributors = Backbone.Collection.extend({
+     url: 'https://github.com/orgs/angular/people',
+     parse: function(response) {
+       return response.results;
+   },
+
+   sync: function(method, model, options) {
+       var that = this;
+       var params = _.extend({
+           type: 'GET',
+           dataType: 'jsonp',
+           url: that.url,
+           processData: false
+       }, options);
+
+       return $.ajax(params);
+   }
+   });
+
+
    //Backbone view to render list of Angular repo contributors
    var ContributorsList = Backbone.View.extend({
      el: '.page',
      render: function () {
-       this.$el.html('!List of contributors should show here...');
+       var that = this;
+       var contributors = new Contributors();
+       contributors.fetch({
+         success: function () {
+           that.$el.html('!List of contributors should show here...');
+         }
+       })
      }
    });
 
