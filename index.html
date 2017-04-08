@@ -12,6 +12,10 @@
     <hr/>
     <div class="page"></div>
   </div>
+  <!--Contributors template-->
+  <script type="text/template" id="contributors-template">
+    <h3>Testing</h3>
+  </script>
 
   <!--Including necessary dependencies-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -21,14 +25,10 @@
   <!--Backbone.js code/ Doing everything inline but module system is recommended-->
   <script>
 
-   //Adding an Ajax prefilter function because when requests are being fired to localhost
-   /*$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-     options.url = "https://github.com" + options.url;
-   });*/
    //Backbone contributors collection from GitHub developer API
    var Item = Backbone.Model.extend();
    var Contributors = Backbone.Collection.extend({
-     url: 'https://github.com/orgs/angular/people',
+     url: 'https://api.github.com/orgs/angular/people',
      parse: function(response) {
        return response.results;
    },
@@ -54,8 +54,9 @@
        var that = this;
        var contributors = new Contributors();
        contributors.fetch({
-         success: function () {
-           that.$el.html('!List of contributors should show here...');
+         success: function (contributors) {
+           var template = _.template($('#contributors-template').html(),{contributors:contributors.models});
+           that.$el.html(template);
          }
        })
      }
