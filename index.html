@@ -28,13 +28,13 @@
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
           <li class="active"><a href="#">Home</a></li>
-          <li><a href="#">Repository Details</a></li>
+          <li><a href="#/route1">Repository Details</a></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Rank Contributors by<span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="#">Number of contributions</a></li>
-              <li><a href="#">Number of followers</a></li>
-              <li><a href="#">Repositories published</a></li>
+              <li><a href="#/route2">Number of contributions</a></li>
+              <li><a href="#/route3">Number of followers</a></li>
+              <li><a href="#/route4">Repositories published</a></li>
             </ul>
           </li>
         </ul>
@@ -139,10 +139,14 @@ var Contributor = Backbone.Model.extend({
 
    });
 
-    //Router to load the Homepage
+    //Routers
     var Router = Backbone.Router.extend({
       routes: {
-        '':'home'
+        '':'home',
+        'route1':'repoDetails',
+        'route2':'numContributions',
+        'route3':'numFollowers',
+        'route4':'reposPublished'
       }
     });
 
@@ -151,11 +155,35 @@ var Contributor = Backbone.Model.extend({
 
     //Instance of the new model
     var contributor = new Contributor();
+
     //Creating instance of Homepage Router
     var router = new Router();
     router.on('route:home', function () {
       contributorsList.render();
     });
+
+    //Creating instance of repository details Router
+    router.on('route:repoDetails', function () {
+      console.log("show details of the main repository");
+    });
+
+    //Creating instance of rank by number of contributions Router
+    router.on('route:numContributions', function () {
+      console.log("show rank by number of contributions to a repository");
+    });
+
+    //Creating instance of rank by number of followers Router
+    router.on('route:numFollowers', function () {
+      console.log("show rank by number of followers to a repository");
+    });
+
+    //Creating instance of rank by number of repositories publisded Router
+    router.on('route:reposPublished', function () {
+      console.log("show rank by number of repositories published");
+    });
+
+
+
     //Kickstart backbone
     Backbone.history.start();
   </script>
