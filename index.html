@@ -119,6 +119,10 @@
 
   <!--Backbone.js code(Doing everything inline but module system is recommended)-->
   <script>
+  //Appending a jQuery prefilter function
+  $.ajaxPrefilter(function(options, originalOptions, jqXHR){
+    options.url = "https://api.github.com/repos/angular/angular" + options.url;
+  });
 
    //Backbone contributors collection from GitHub developer API
 
@@ -137,7 +141,7 @@ var Contributor = Backbone.Model.extend({
    // Contributors collection
    var Contributors = Backbone.Collection.extend({
      model: Contributor,
-     url: 'https://api.github.com/repos/angular/angular.js/contributors'
+     url: '/contributors'
    });
 
    var RepositoryDetails = Backbone.Collection.extend({
