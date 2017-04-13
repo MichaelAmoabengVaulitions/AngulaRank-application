@@ -90,6 +90,25 @@
 
   </script>
 
+
+
+  <!--Contributors template-->
+  <script type="text/template" id="repo-Details">
+
+      <div class="jumbotron">
+        <strong>Repository Details</strong>
+        <div id="details" class="collapse">
+          <% _.each(obj.repositoryDetails, function(details){ %>
+            Followers_url: <%- details.get('followers_url') %><br/>
+            Organizations_url: <%- details.get('organizations_url') %><br/>
+            Subscriptions_url:<%- details.get('subscriptions_url') %><br/>
+            Repositories_url: <%- details.get('repos_url') %><br/>
+            Gists_url: <%- details.get('gists_url') %>
+          <% }); %>
+        </div>
+      </div>
+  </script>
+
   <!--Including necessary dependencies-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.2/underscore-min.js"></script>
@@ -121,6 +140,10 @@ var Contributor = Backbone.Model.extend({
      url: 'https://api.github.com/repos/angular/angular.js/contributors'
    });
 
+   var RepositoryDetails = Backbone.Collection.extend({
+     url: 'https://api.github.com/orgs/angular/repos'
+   });
+
 
    //Backbone view to render list of Angular repo contributors
    var ContributorsList = Backbone.View.extend({
@@ -135,8 +158,19 @@ var Contributor = Backbone.Model.extend({
            that.$el.html(template);
          }
        })
-     },
+     }
 
+   });
+
+   //Backbone view to render the repository details
+   var RepositoryDetails = Backbone.View.extend({
+     el: '.page',
+     render: function () {
+
+           var template = _.template($('#repo-Details').html(), {repositoryDetails:repositoryDetails.models});
+           this.$el.html(template);
+
+     }
    });
 
     //Routers
@@ -156,6 +190,9 @@ var Contributor = Backbone.Model.extend({
     //Instance of the new model
     var contributor = new Contributor();
 
+    //Instance of view to render the repository details
+    var repositoryDetails = new RepositoryDetails();
+
     //Creating instance of Homepage Router
     var router = new Router();
     router.on('route:home', function () {
@@ -164,7 +201,7 @@ var Contributor = Backbone.Model.extend({
 
     //Creating instance of repository details Router
     router.on('route:repoDetails', function () {
-      console.log("show details of the main repository");
+      repositoryDetails.render();
     });
 
     //Creating instance of rank by number of contributions Router
