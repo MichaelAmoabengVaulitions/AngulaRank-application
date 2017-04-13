@@ -55,8 +55,9 @@
   <!--Contributors template-->
   <script type="text/template" id="contributors-template">
 
-      <div class="jumbotron">
+      <!--<div class="jumbotron">
         <strong>Contributor's Details</strong>
+        <% _.each(obj.contributors, function(contributor){ %>
         <div id="details" class="collapse">
             Followers_url: <%- contributor.get('followers_url') %><br/>
             Organizations_url: <%- contributor.get('organizations_url') %><br/>
@@ -64,7 +65,8 @@
             Repositories_url: <%- contributor.get('repos_url') %><br/>
             Gists_url: <%- contributor.get('gists_url') %>
         </div>
-      </div>
+        <% }); %>
+      </div>-->
 
         <table class="table table-striped">
           <thead class="thead-default">
@@ -82,7 +84,7 @@
                 <td><a href="<%- contributor.get('html_url') %>"><%- contributor.get('html_url') %></a></td>
                 <td><%- contributor.get('user') %></td>
                 <td><%- contributor.get('contributions') %></td>
-                <td><button class="btn btn-info" data-toggle="collapse" data-target="#details">Show details</button></td>
+                <td><button class="btn btn-info" data-toggle="collapse" data-target="#details"><a href="#/route5">Show details</a></button></td>
                 </tr>
             <% }); %>
           </tbody>
@@ -92,20 +94,14 @@
 
 
 
-  <!--Contributors template-->
+  <!--Repository Details template-->
   <script type="text/template" id="repo-Details">
 
       <div class="jumbotron">
         <strong>Repository Details</strong>
-        <div id="details" class="collapse">
-          <% _.each(obj.repositoryDetails, function(details){ %>
-            Followers_url: <%- details.get('followers_url') %><br/>
-            Organizations_url: <%- details.get('organizations_url') %><br/>
-            Subscriptions_url:<%- details.get('subscriptions_url') %><br/>
-            Repositories_url: <%- details.get('repos_url') %><br/>
-            Gists_url: <%- details.get('gists_url') %>
-          <% }); %>
-        </div>
+          <% _.each(obj.contributors, function(contributor){ %>
+            <%- contributor.get('contributions') %>
+            <% }); %>
       </div>
   </script>
 
@@ -128,13 +124,8 @@
 
    //Contributors Model
 var Contributor = Backbone.Model.extend({
-  events:{
-    'click.btn ': 'showDetais'
-  },
- showDetais: function (e) {
-   $(e.target).toggleClass('active');
-   $(e.target).siblings('.collapse').slideToggle('fast');
- }
+   urlRoot: '/contributors'
+
 });
 
 
@@ -145,7 +136,7 @@ var Contributor = Backbone.Model.extend({
    });
 
    var RepositoryDetails = Backbone.Collection.extend({
-     url: 'https://api.github.com/orgs/angular/repos'
+     url: 'https://api.github.com/repos/angular/angular'
    });
 
 
@@ -177,6 +168,15 @@ var Contributor = Backbone.Model.extend({
      }
    });
 
+
+   //Backbone view to render the contributors details
+   var ContributorDetails = Backbone.View.extend({
+     el: '.page',
+     render: function () {
+           this.$el.html(" Show contributors details here....");
+     }
+   });
+
     //Routers
     var Router = Backbone.Router.extend({
       routes: {
@@ -184,7 +184,8 @@ var Contributor = Backbone.Model.extend({
         'route1':'repoDetails',
         'route2':'numContributions',
         'route3':'numFollowers',
-        'route4':'reposPublished'
+        'route4':'reposPublished',
+        'route5':'contributorDetails'
       }
     });
 
@@ -196,6 +197,9 @@ var Contributor = Backbone.Model.extend({
 
     //Instance of view to render the repository details
     var repositoryDetails = new RepositoryDetails();
+
+    //Instance of view to render the cotributors details
+    var contributorDetails = new ContributorDetails();
 
     //Creating instance of Homepage Router
     var router = new Router();
@@ -222,6 +226,13 @@ var Contributor = Backbone.Model.extend({
     router.on('route:reposPublished', function () {
       console.log("show rank by number of repositories published");
     });
+
+
+    //Creating instance of contributor details Router
+    router.on('route:contributorDetails', function () {
+      contributorDetails.render();
+    });
+
 
 
 
