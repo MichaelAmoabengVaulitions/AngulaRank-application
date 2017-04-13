@@ -84,7 +84,7 @@
                 <td><a href="<%- contributor.get('html_url') %>"><%- contributor.get('html_url') %></a></td>
                 <td><%- contributor.get('user') %></td>
                 <td><%- contributor.get('contributions') %></td>
-                <td><button class="btn btn-info" data-toggle="collapse" data-target="#details"><a href="#/route5">Show details</a></button></td>
+                <td><button class="btn btn-info" data-toggle="collapse" data-target="#details"><a href="#/route5/<%- contributor.get('id') %>">Show details</a></button></td>
                 </tr>
             <% }); %>
           </tbody>
@@ -103,6 +103,18 @@
             <%- contributor.get('contributions') %>
             <% }); %>
       </div>
+  </script>
+
+  <!--Contributors Details template-->
+  <script type="text/template" id="contributors-details-template">
+    <div class="row">
+      <div class="col col-md-8">
+        <h3>Details</h3>
+        <hr/>
+
+        <strong></strong>
+      </div>
+    </div>
   </script>
 
   <!--Including necessary dependencies-->
@@ -161,10 +173,8 @@ var Contributor = Backbone.Model.extend({
    var RepositoryDetails = Backbone.View.extend({
      el: '.page',
      render: function () {
-
            var template = _.template($('#repo-Details').html(), {repositoryDetails:repositoryDetails.models});
            this.$el.html(template);
-
      }
    });
 
@@ -172,8 +182,23 @@ var Contributor = Backbone.Model.extend({
    //Backbone view to render the contributors details
    var ContributorDetails = Backbone.View.extend({
      el: '.page',
-     render: function () {
-           this.$el.html(" Show contributors details here....");
+     render: function (options) {
+       var that = this;
+       if(options.id){
+         //GET request to get the details
+         var contributor = new Contributor({id : options.id});
+         //Fetch contibutor by id
+         contributor.fetch({
+           success: function (contributor) {
+             var template = _.template($('#contributors-details-template').html(),{contributor : contributor});
+             that.$el.html(template);
+           }
+         })
+       }else {
+         var template = _.template($('#contributors-details-template').html(),{contributor : null});
+         this.$el.html(template);
+       }
+
      }
    });
 
@@ -185,7 +210,7 @@ var Contributor = Backbone.Model.extend({
         'route2':'numContributions',
         'route3':'numFollowers',
         'route4':'reposPublished',
-        'route5':'contributorDetails'
+        'route5/:id':'contributorDetails'
       }
     });
 
@@ -229,8 +254,8 @@ var Contributor = Backbone.Model.extend({
 
 
     //Creating instance of contributor details Router
-    router.on('route:contributorDetails', function () {
-      contributorDetails.render();
+    router.on('route:contributorDetails', function (id) {
+      contributorDetails.render({id : id});
     });
 
 
