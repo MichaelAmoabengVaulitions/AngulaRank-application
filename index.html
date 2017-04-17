@@ -28,16 +28,18 @@
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
           <li class="active"><a href="#">Home</a></li>
-          <li><a href="#/route1">Repository Details</a></li>
+          <li><a href="https://github.com/angular/angular">Repository Details</a></li>
+
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Rank Contributors by<span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Filter by<span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="#/route2">Number of contributions</a></li>
-              <li><a href="#/route3">Number of followers</a></li>
-              <li><a href="#/route4">Repositories published</a></li>
+
+              <li><a href="#/followers">Number of followers</a></li>
+              <li><a href="#/repositories">Repositories published</a></li>
             </ul>
           </li>
         </ul>
+      </div>
 
       </div><!--/.nav-collapse -->
     </div><!--/.container-fluid -->
@@ -55,25 +57,13 @@
   <!--Contributors template-->
   <script type="text/template" id="contributors-template">
 
-      <!--<div class="jumbotron">
-        <strong>Contributor's Details</strong>
-        <% _.each(obj.contributors, function(contributor){ %>
-        <div id="details" class="collapse">
-            Followers_url: <%- contributor.get('followers_url') %><br/>
-            Organizations_url: <%- contributor.get('organizations_url') %><br/>
-            Subscriptions_url:<%- contributor.get('subscriptions_url') %><br/>
-            Repositories_url: <%- contributor.get('repos_url') %><br/>
-            Gists_url: <%- contributor.get('gists_url') %>
-        </div>
-        <% }); %>
-      </div>-->
-
         <table class="table table-striped">
           <thead class="thead-default">
             <tr>
-              <th>User Name</th>
-              <th>URL</th>
+              <th>User</th>
+              <th>ID</th>
               <th>User Type</th>
+              <th>site Admin</th>
               <th>Number of Contributions</th>
             </tr>
           </thead>
@@ -81,41 +71,73 @@
             <% _.each(obj.contributors, function(contributor){ %>
               <tr>
                 <td><%- contributor.get('login') %></td>
-                <td><a href="<%- contributor.get('html_url') %>"><%- contributor.get('html_url') %></a></td>
-                <td><%- contributor.get('user') %></td>
+                <td><%- contributor.get('id') %></td>
+                <td><%- contributor.get('type') %></td>
+                <td><%- contributor.get('site_admin') %></td>
                 <td><%- contributor.get('contributions') %></td>
-                <td><button class="btn btn-info" data-toggle="collapse" data-target="#details"><a href="#/route5/<%- contributor.get('id') %>">Show details</a></button></td>
+                <td><button class="btn btn-info" data-toggle="collapse" data-target="#details"><a href="<%- contributor.get('html_url') %>">Show details</a></button></td>
                 </tr>
             <% }); %>
           </tbody>
         </table>
-
   </script>
 
 
 
-  <!--Repository Details template-->
-  <script type="text/template" id="repo-Details">
-
-      <div class="jumbotron">
-        <strong>Repository Details</strong>
-          <% _.each(obj.contributors, function(contributor){ %>
-            <%- contributor.get('contributions') %>
-            <% }); %>
-      </div>
+  <!--Filter by number of followers template-->
+  <script type="text/template" id="number-of-followers-template">
+    <table class="table table-striped">
+      <thead class="thead-default">
+        <tr>
+          <th>User</th>
+          <th>ID</th>
+          <th>User Type</th>
+          <th>site Admin</th>
+          <th>Number of Followers</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(obj.followers, function(follower){ %>
+          <tr>
+            <td><%- follower.get('login') %></td>
+            <td><%- follower.get('id') %></td>
+            <td><%- follower.get('type') %></td>
+            <td><%- follower.get('site_admin') %></td>
+            <td><%- follower.get('followers') %></td>
+            <td><button class="btn btn-info" data-toggle="collapse" data-target="#details"><a href="<%- follower.get('html_url') %>">Show details</a></button></td>
+            </tr>
+        <% }); %>
+      </tbody>
+    </table>
   </script>
 
-  <!--Contributors Details template-->
-  <script type="text/template" id="contributors-details-template">
-    <div class="row">
-      <div class="col col-md-8">
-        <h3>Details</h3>
-        <hr/>
-
-        <strong></strong>
-      </div>
-    </div>
+  <!--Filter by number of repositories published template-->
+  <script type="text/template" id="number-of-repositories-template">
+    <table class="table table-striped">
+      <thead class="thead-default">
+        <tr>
+          <th>User</th>
+          <th>ID</th>
+          <th>User Type</th>
+          <th>site Admin</th>
+          <th>Number of Repos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(obj.repositories, function(repository){ %>
+          <tr>
+            <td><%- repository.get('login') %></td>
+            <td><%- repository.get('id') %></td>
+            <td><%- repository.get('type') %></td>
+            <td><%- repository.get('site_admin') %></td>
+            <td><%- repository.get('public_repos') %></td>
+            <td><button class="btn btn-info" data-toggle="collapse" data-target="#details"><a href="<%- repository.get('html_url') %>">Show details</a></button></td>
+            </tr>
+        <% }); %>
+      </tbody>
+    </table>
   </script>
+
 
   <!--Including necessary dependencies-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -127,16 +149,11 @@
 
   <!--Backbone.js code(Doing everything inline but module system is recommended)-->
   <script>
-  //Appending a jQuery prefilter function
-  $.ajaxPrefilter(function(options, originalOptions, jqXHR){
-    options.url = "https://api.github.com/repos/angular/angular" + options.url;
-  });
-
    //Backbone contributors collection from GitHub developer API
 
    //Contributors Model
-var Contributor = Backbone.Model.extend({
-   urlRoot: '/contributors'
+   var Contributor = Backbone.Model.extend({
+   urlRoot: 'https://api.github.com/repos/angular/angular/contributor'
 
 });
 
@@ -144,12 +161,36 @@ var Contributor = Backbone.Model.extend({
    // Contributors collection
    var Contributors = Backbone.Collection.extend({
      model: Contributor,
-     url: '/contributors'
+     url: 'https://api.github.com/repos/angular/angular/contributors'
    });
 
-   var RepositoryDetails = Backbone.Collection.extend({
-     url: 'https://api.github.com/repos/angular/angular'
+
+   //Rank by the number of followers Model
+   var Follower = Backbone.Model.extend({
+   urlRoot: 'https://api.github.com/repos/angular/angular/contributors?q=followers:>=1000'
+
+});
+
+
+   //Rank by the number of followers Collection
+   var Followers = Backbone.Collection.extend({
+     model: Follower,
+     url: 'https://api.github.com/repos/angular/angular/contributors?q=followers:>=1000'
    });
+
+   //Rank by the number of repositories Model
+   var Repository = Backbone.Model.extend({
+   urlRoot: 'https://api.github.com/repos/angular/angular/contributors?q=repos:>=1000'
+
+  });
+
+
+   //Rank by the number of repositories Collection
+   var Repositories = Backbone.Collection.extend({
+     model: Repository,
+     url: 'https://api.github.com/repos/angular/angular/contributors?q=repos:>=1000'
+   });
+
 
 
    //Backbone view to render list of Angular repo contributors
@@ -169,62 +210,72 @@ var Contributor = Backbone.Model.extend({
 
    });
 
-   //Backbone view to render the repository details
-   var RepositoryDetails = Backbone.View.extend({
+
+   //Backbone view to render filtered list by number of followers
+   var NumberFollowers = Backbone.View.extend({
      el: '.page',
      render: function () {
-           var template = _.template($('#repo-Details').html(), {repositoryDetails:repositoryDetails.models});
-           this.$el.html(template);
-     }
-   });
-
-
-   //Backbone view to render the contributors details
-   var ContributorDetails = Backbone.View.extend({
-     el: '.page',
-     render: function (options) {
        var that = this;
-       if(options.id){
-         //GET request to get the details
-         var contributor = new Contributor({id : options.id});
-         //Fetch contibutor by id
-         contributor.fetch({
-           success: function (contributor) {
-             var template = _.template($('#contributors-details-template').html(),{contributor : contributor});
-             that.$el.html(template);
-           }
-         })
-       }else {
-         var template = _.template($('#contributors-details-template').html(),{contributor : null});
-         this.$el.html(template);
-       }
-
+       var follower = new Follower();
+       var followers = new Followers();
+       followers.fetch({
+         success: function (followers) {
+           var template = _.template($('#number-of-followers-template').html(),{followers:followers.models});
+           that.$el.html(template);
+         }
+       })
      }
+
    });
+
+
+      //Backbone view to render filtered list by number of repositories publisded
+      var NumberRepositories = Backbone.View.extend({
+        el: '.page',
+        render: function () {
+          var that = this;
+          var repository = new Repository();
+          var repositories = new Repositories();
+          repositories.fetch({
+            success: function (repositories) {
+              var template = _.template($('#number-of-repositories-template').html(),{repositories:repositories.models});
+              that.$el.html(template);
+            }
+          })
+        }
+
+      });
+
 
     //Routers
     var Router = Backbone.Router.extend({
       routes: {
         '':'home',
-        'route1':'repoDetails',
-        'route2':'numContributions',
-        'route3':'numFollowers',
-        'route4':'reposPublished',
-        'route5/:id':'contributorDetails'
+        'followers':'numFollowers',
+        'repositories':'reposPublished'
       }
     });
 
     //Creating instance of View to render list of Angular repo contributors
     var contributorsList = new ContributorsList();
 
-    //Instance of the new model
+
+    //Creating instance of View to render filter by number of followers
+    var numberFollowers = new NumberFollowers();
+
+    //Creating instance of View to render filter by number of repositories
+    var numberRepositories = new NumberRepositories();
+
+
+
+    //Instance of the contributor model
     var contributor = new Contributor();
 
-    //Instance of view to render the repository details
-    var repositoryDetails = new RepositoryDetails();
+    //Instance of the follower model
+    var follower = new Follower();
 
-    //Instance of view to render the cotributors details
-    var contributorDetails = new ContributorDetails();
+    //Instance of the repository model
+    var repository = new Repository();
 
     //Creating instance of Homepage Router
     var router = new Router();
@@ -232,34 +283,16 @@ var Contributor = Backbone.Model.extend({
       contributorsList.render();
     });
 
-    //Creating instance of repository details Router
-    router.on('route:repoDetails', function () {
-      repositoryDetails.render();
-    });
-
-    //Creating instance of rank by number of contributions Router
-    router.on('route:numContributions', function () {
-      console.log("show rank by number of contributions to a repository");
-    });
 
     //Creating instance of rank by number of followers Router
     router.on('route:numFollowers', function () {
-      console.log("show rank by number of followers to a repository");
+      numberFollowers.render();
     });
 
     //Creating instance of rank by number of repositories publisded Router
     router.on('route:reposPublished', function () {
-      console.log("show rank by number of repositories published");
+      numberRepositories.render()
     });
-
-
-    //Creating instance of contributor details Router
-    router.on('route:contributorDetails', function (id) {
-      contributorDetails.render({id : id});
-    });
-
-
-
 
     //Kickstart backbone
     Backbone.history.start();
